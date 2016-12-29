@@ -88,9 +88,12 @@
 			/* sanity check: empty nick */
 			if ($_POST['txtNick'] == "")
 				die("ERROR: must supply a valid nick!");
-
+			
+			//Also a fix here, same sqli problem! it's not my own code and i didn't study it enough
+			// to fix it all, i'm just fixing the parts that i found by a quick view :|
+			$c_txtNick = mysqli_real_escape_string($_POST['txtNick']);
 			/* check for existing user with same nick */
-			$tmpQuery = "SELECT playerID FROM " . $CFG_TABLE[players] . " WHERE nick = '".$_POST['txtNick']."'";
+			$tmpQuery = "SELECT playerID FROM " . $CFG_TABLE[players] . " WHERE nick = '".$c_txtNick."'";
 			$existingUsers = mysql_query($tmpQuery);
             if (!$existingUsers) echo mysql_errno() . ": " . mysql_error() . "\n<br><br>";
 			if (mysql_num_rows($existingUsers) > 0)
@@ -144,7 +147,7 @@
 
 		case 'Login':
 			//shall we sanitize user input first??
-			$c_txtNick = mysqli_real_escape_string(_POST['txtNick']);
+			$c_txtNick = mysqli_real_escape_string($_POST['txtNick']);
 			/* check for a player with supplied nick and password */
 			$tmpQuery = "SELECT * FROM " . $CFG_TABLE[players] . " WHERE nick = '".$c_txtNick."' AND password = '".md5($_POST['pwdPassword'])."'";
 			$tmpPlayers = mysql_query($tmpQuery);
